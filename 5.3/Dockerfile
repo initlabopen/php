@@ -288,10 +288,6 @@ RUN set -ex; \
     drush_patchfile_url="https://bitbucket.org/davereid/drush-patchfile.git"; \
     su-exec wodby git clone "${drush_patchfile_url}" /home/wodby/.drush/drush-patchfile; \
     \
-    mv /usr/local/bin/actions.mk /usr/local/bin/php.mk; \
-    # Change overridden target name to avoid warnings.
-    sed -i 's/git-checkout:/php-git-checkout:/' /usr/local/bin/php.mk; \
-    \
     # Clean up
     su-exec wodby composer clear-cache; \
     su-exec wodby drush cc drush
