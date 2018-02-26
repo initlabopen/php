@@ -1,4 +1,6 @@
-.PHONY: migrate git-clone git-checkout files-import files-link walter check-ready check-live
+-include /usr/local/bin/php.mk
+
+.PHONY: git-checkout drush-import init-drupal cache-clear cache-rebuild
 
 check_defined = \
     $(strip $(foreach 1,$1, \
@@ -7,42 +9,33 @@ __check_defined = \
     $(if $(value $1),, \
       $(error Required parameter is missing: $1$(if $2, ($2))))
 
-host ?= localhost
-max_try ?= 1
-wait_seconds ?= 1
-delay_seconds ?= 0
 is_hash ?= 0
-branch = ""
-# Some symbols in env vars break cgi-fcgi
-command ?= env -i SCRIPT_NAME="/ping" SCRIPT_FILENAME="/ping" REQUEST_METHOD=GET cgi-fcgi -bind -connect "${host}":9001 | grep -q "pong"
-service = PHP-FPM
+target ?= all
 
-default: check-ready
+ifeq ("$(DOCROOT_SUBDIR)", "")
+    DRUPAL_ROOT=$(APP_ROOT)
+else
+    DRUPAL_ROOT=$(APP_ROOT)/$(DOCROOT_SUBDIR)
+endif
 
-migrate:
-	sudo migrate $(from) $(to)
+DRUPAL_SITE_DIR=$(DRUPAL_ROOT)/sites/$(DRUPAL_SITE)
 
-git-clone:
-	$(call check_defined, url)
-	git_clone $(url) $(branch)
+default: cache-clear
 
 git-checkout:
 	$(call check_defined, target)
+	chmod 755 $(DRUPAL_SITE_DIR) || true
 	git_checkout $(target) $(is_hash)
 
-files-import:
+drush-import:
 	$(call check_defined, source)
-	files_import $(source)
+	drush_import $(source)
 
-files-link:
-	$(call check_defined, public_dir)
-	files_link $(public_dir)
+init-drupal:
+	DRUPAL_SITE_DIR=$(DRUPAL_SITE_DIR) DRUPAL_ROOT=$(DRUPAL_ROOT) init_drupal
 
-walter:
-	test ! -f "$(APP_ROOT)/wodby.yml" || walter -c "$(APP_ROOT)/wodby.yml"
+cache-clear:
+	drush -r $(DRUPAL_ROOT) cache-clear $(target)
 
-check-ready:
-	wait-for.sh "$(command)" $(service) $(host) $(max_try) $(wait_seconds) $(delay_seconds)
-
-check-live:
-	@echo "OK"
+cache-rebuild:
+	drush -r $(DRUPAL_ROOT) cache-rebuild
