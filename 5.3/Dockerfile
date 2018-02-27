@@ -29,7 +29,7 @@ ENV PHP_DEV="${PHP_DEV}" \
     GIT_USER_EMAIL="wodby@example.com" \
     GIT_USER_NAME="wodby"
 
-ENV DRUSH_VER="7.4.0" \
+ENV DRUSH_VER="6.2.0" \
     \
     PHP_ALWAYS_POPULATE_RAW_POST_DATA="-1" \
     PHP_MBSTRING_ENCODING_TRANSLATION="Off" \

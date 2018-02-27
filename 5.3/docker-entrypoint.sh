@@ -58,7 +58,6 @@ process_templates() {
     _gotpl "docker-php.ini.tpl" "${PHP_INI_DIR}/conf.d/docker-php.ini"
     _gotpl "docker-php-ext-opcache.ini.tpl" "${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini"
     _gotpl "docker-php-ext-xdebug.ini.tpl" "${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini"
-    _gotpl "zz-www.conf.tpl" "/usr/local/etc/php-fpm.d/zz-www.conf"
     _gotpl "wodby.settings.php.tpl" "${CONF_DIR}/wodby.settings.php"
 }
 
